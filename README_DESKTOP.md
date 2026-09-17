@@ -3,9 +3,9 @@
 Aplicação Desktop nativa profissional desenvolvida em **PySide6 (Qt 6)** com empacotamento completo para **Linux** e **Windows** via **PyInstaller**.
 
 ### 📥 Downloads dos Executáveis Prontos
-* 🪟 **Windows (.exe)**: [**Download VideoAutomate.exe**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate.exe)
-* 🐧 **Linux**: [**Download VideoAutomate-linux**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate-linux)
-* 📦 **GitHub Releases**: [**Página de Releases do Projeto**](https://github.com/manoel-roberto/video-automate/releases)
+* 🪟 **Windows (.exe)**: [**Download VideoAutomate.exe**](https://github.com/manoel-roberto/video-automate/releases/latest/download/VideoAutomate.exe)
+* 🐧 **Linux (Executável)**: [**Download VideoAutomate-linux**](https://github.com/manoel-roberto/video-automate/releases/latest/download/VideoAutomate-linux)
+* 📦 **Histórico de Versões e Releases**: [**Página de Releases do Projeto**](https://github.com/manoel-roberto/video-automate/releases)
 
 ---
 
