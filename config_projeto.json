@@ -1,0 +1,234 @@
+{
+  "titulo_tutorial": "Tutorial Completo: Como Acessar e se Inscrever no AVA Moodle PGDP UEFS",
+  "configuracoes_gerais": {
+    "voz_padrao": "pt-BR-AntonioNeural",
+    "taxa_fala_padrao": "+0%",
+    "volume_padrao": "+0%",
+    "resolucao_padrao": [
+      1920,
+      1080
+    ],
+    "fps_padrao": 30,
+    "pausa_final_padrao": 0.5,
+    "video_saida": "saida/tutorial_moodle_pgdp_uefs.mp4",
+    "manter_audios_temp": false
+  },
+  "cenas": [
+    {
+      "id": "cena_01",
+      "titulo": "Passo 01: Abertura e Introdução",
+      "video_path": "imgs/Cena 01.jpeg",
+      "texto_narracao": "Seja bem-vindo ao tutorial prático do Ambiente Virtual de Aprendizagem da PGDP UÉFIS. Neste vídeo, você vai aprender o passo a passo completo: desde o primeiro acesso e atualização cadastral até a inscrição em cursos e navegação nas salas virtuais. Vamos começar?",
+      "overlay_texto": "Passo 01: Abertura e Introdução",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_02",
+      "titulo": "Passo 02: Portal de Capacitação",
+      "video_path": "imgs/Cena 02.png",
+      "texto_narracao": "No portal de capacitação, no ponto 1, você confere o endereço capacitacao.uéfis.br. Ao localizar a capacitação desejada, vá até o ponto 2 e clique em 'Muudol' para ser direcionado à plataforma de cursos.",
+      "overlay_texto": "Passo 02: Portal de Capacitação",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_03",
+      "titulo": "Passo 03: Tela de Acesso e Login",
+      "video_path": "imgs/Cena 03.png",
+      "texto_narracao": "Na tela de acesso, se você ainda não tem um cadastro ativo, localize o destaque com o número 1: clique em 'Criar uma conta' para iniciar o seu registro. Caso já possua sua identificação basta colocar a identificação e a senha e clicar em Acessar",
+      "overlay_texto": "Passo 03: Tela de Acesso e Login",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_04",
+      "titulo": "Passo 04: Formulário de Cadastro",
+      "video_path": "imgs/Cena 04.png",
+      "texto_narracao": "Preencha todos os campos obrigatórios: nome de usuário, senha com critérios de segurança, e-mail institucional, nome e localidade. Em seguida, valide o captcha e clique em 'Criar minha conta'.",
+      "overlay_texto": "Passo 04: Formulário de Cadastro",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_05",
+      "titulo": "Passo 05: Confirmação por E-mail",
+      "video_path": "imgs/Cena 05.png",
+      "texto_narracao": "Acesse sua caixa de entrada institucional. Você receberá uma mensagem automática do sistema com as instruções. Clique no link indicado para validar e ativar sua conta na plataforma.",
+      "overlay_texto": "Passo 05: Confirmação por E-mail",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_06",
+      "titulo": "Passo 06: Painel Inicial do Usuário",
+      "video_path": "imgs/Cena 06.png",
+      "texto_narracao": "Após o login, você acessa seu painel inicial. No menu superior esquerdo, você navega entre a Página Inicial, Painel e Meus Cursos. No canto superior direito, você encontra notificações, mensagens e seu menu de perfil. Abaixo, acompanhe sua linha do tempo e o calendário de atividades.",
+      "overlay_texto": "Passo 06: Painel Inicial do Usuário",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_07",
+      "titulo": "Passo 07: Página Inicial do AVA Moodle",
+      "video_path": "imgs/Cena 07.png",
+      "texto_narracao": "Na página inicial da PGDP, você encontra informações institucionais, diretrizes do Plano Anual de Capacitação (PAC) e materiais complementares de suporte.",
+      "overlay_texto": "Passo 07: Página Inicial do AVA Moodle",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_08",
+      "titulo": "Passo 08: Catálogo e Vitrine de Cursos",
+      "video_path": "imgs/Cena 08.png",
+      "texto_narracao": "Descendo a página, você encontra a vitrine de cursos disponíveis. No ponto 1, é possível utilizar a busca rápida por nome. No ponto 2, clique diretamente no banner ou no card do curso desejado para abrir a página de inscrição.",
+      "overlay_texto": "Passo 08: Catálogo e Vitrine de Cursos",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_09",
+      "titulo": "Passo 09: Termo de Aceite e 1º Passo",
+      "video_path": "imgs/Cena 09.png",
+      "texto_narracao": "Na página do curso, no ponto 1, leia com atenção o Termo de Aceite e as regras de assiduidade. O ponto 2 destaca o '1º Passo': clique no botão azul para validar e atualizar previamente seus dados cadastrais e o e-mail da sua chefia. No ponto 3, verifique as datas limites e os prazos informados.",
+      "overlay_texto": "Passo 09: Termo de Aceite e 1º Passo",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_10",
+      "titulo": "Passo 10: Visualização do Perfil",
+      "video_path": "imgs/Cena 10.png",
+      "texto_narracao": "Você será levado ao seu perfil. No ponto 1, clique em 'Modificar perfil'. No ponto 2, verifique as informações institucionais cadastradas, como cargo e e-mail da chefia. O ponto 3 disponibiliza, caso queira, o QR Code para sincronização com o aplicativo móvel.",
+      "overlay_texto": "Passo 10: Visualização do Perfil",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_11",
+      "titulo": "Passo 11: Edição de Cadastro e Seções",
+      "video_path": "imgs/Cena 11.png",
+      "texto_narracao": "Na edição de cadastro, o ponto 1 e 2 mostra o seu nome, mostra a trilha de navegação. No ponto 3, você pode clicar em 'Expandir tudo' para visualizar todas as abas, ou acessar individualmente a seção.",
+      "overlay_texto": "Passo 11: Edição de Cadastro e Seções",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_12",
+      "titulo": "Passo 12: Dados Pessoais (Geral)",
+      "video_path": "imgs/Cena 12.png",
+      "texto_narracao": "Na seção Geral, confira e ajuste o Nome, o Sobrenome  e valide o Endereço de e-mail institucional, e todos os outros pontos que estão obrigatórios com o indicativo vermelho ao lado, garantindo que suas comunicações cheguem corretamente.",
+      "overlay_texto": "Passo 12: Dados Pessoais (Geral)",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_13",
+      "titulo": "Passo 13: Dados Institucionais da Chefia",
+      "video_path": "imgs/Cena 13.png",
+      "texto_narracao": "Em 'Outros campos', no ponto 1, verifique sua carreira. Nos pontos 2 e 3, preencha obrigatoriamente o nome e o e-mail funcional da sua chefia imediata. No ponto 4, informe seu setor de lotação. Por fim, no ponto 5, clique em 'Atualizar perfil' para salvar.",
+      "overlay_texto": "Passo 13: Dados Institucionais da Chefia",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_14",
+      "titulo": "Passo 14: Conclusão da Inscrição (2º Passo)",
+      "video_path": "imgs/Cena 14.png",
+      "texto_narracao": "Retorne à página do curso. Após ter confirmado os dados do chefe e endereço de e-mail, No ponto 2, revise as instruções finais do 2º passo. Em seguida, no campo 'Chave de inscrição' no ponto 1, digite em letras maiúsculas a palavra ACEITO e clique no botão 'Inscreva-me'.",
+      "overlay_texto": "Passo 14: Conclusão da Inscrição (2º Passo)",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_15",
+      "titulo": "Passo 15: Sala e Ambiente do Curso",
+      "video_path": "imgs/Cena 15.png",
+      "texto_narracao": "Pronto, você já está inscrito! No topo, no ponto 1, você tem as abas de navegação: Curso, Participantes, Notas e Competências. No ponto 2, localize o menu lateral retrátil de navegação dos módulos, e no ponto 3, acompanhe a área de conteúdo com os avisos e boas-vindas.",
+      "overlay_texto": "Passo 15: Sala e Ambiente do Curso",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_16",
+      "titulo": "Passo 16: Navegação pela Barra Lateral",
+      "video_path": "imgs/Cena 16.png",
+      "texto_narracao": "O menu lateral permite saltar diretamente entre os tópicos: no ponto 2 e no ponto 3, 4, 5 e eticétera. Para ampliar sua área de leitura, você pode clicar no ícone de fechar no ponto 1 para recolher o índice lateral, navegando de forma limpa pelo conteúdo central.\"",
+      "overlay_texto": "Passo 16: Navegação pela Barra Lateral",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_17",
+      "titulo": "Passo 17: Visão Panorâmica de Conteúdo",
+      "video_path": "imgs/Cena 17.png",
+      "texto_narracao": "Com o menu recolhido, você visualiza em tela cheia as orientações de frequência mínima de 75%, conduta nas aulas remotas e critérios de certificação do PAC 2026. Clicando no link contrair tudo poderá visualizar todos os tópicos do curso geral.",
+      "overlay_texto": "Passo 17: Visão Panorâmica de Conteúdo",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_18",
+      "titulo": "Passo 18: Estrutura Didática dos Módulos",
+      "video_path": "imgs/Cena 18.png",
+      "texto_narracao": "A estrutura pedagógica é dividida em blocos organizados: no ponto 1, orientações gerais; nos pontos 2 e 3, apresentação e guia didático; no ponto 4, os módulos temáticos de aula; no ponto 5, materiais de apoio; no ponto 6, link para a aula síncrona; e no ponto 7, controle de frequência e certificado.",
+      "overlay_texto": "Passo 18: Estrutura Didática dos Módulos",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_19",
+      "titulo": "Passo 19: Acesso ao Encontro Ao Vivo",
+      "video_path": "imgs/Cena 19.png",
+      "texto_narracao": "Na seção 'Encontro Ao Vivo', verifique os dias e horários da turma. Para entrar na aula síncrona, localize o ponto 1 e clique em 'Link Reunião: Clique Aqui'.",
+      "overlay_texto": "Passo 19: Acesso ao Encontro Ao Vivo",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_20",
+      "titulo": "Passo 20: Configuração no Microsoft Teams",
+      "video_path": "imgs/Cena 20.png",
+      "texto_narracao": "Na tela da uébi-conferência, digite seu nome completo no ponto 1. No ponto 2, ajuste sua câmera, configure seu microfone e saída de áudio no ponto 3 e, por fim, clique no botão roxo 'Ingressar agora' no ponto 4.",
+      "overlay_texto": "Passo 20: Configuração no Microsoft Teams",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_21",
+      "titulo": "Passo 21: Frequência e Avaliação de Reação",
+      "video_path": "imgs/Cena 21.png",
+      "texto_narracao": "No módulo final, no ponto 1, clique em 'Frequência da Disciplina' para assinar sua presença nos dias de aula. Lembre-se: para liberar a emissão do certificado, é necessário cumprir a frequência mínima e preencher o formulário de Avaliação de Reação.",
+      "overlay_texto": "Passo 21: Frequência e Avaliação de Reação",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_22",
+      "titulo": "Passo 22: Painel de Frequência da Disciplina",
+      "video_path": "imgs/Cena 22.png",
+      "texto_narracao": "Na ferramenta de presença, o ponto 1 apresenta a tabela com as datas de cada encontro, status e pontuação acumulada. No ponto 2, você pode usar a trilha de navegação para retornar rapidamente à página principal do curso.",
+      "overlay_texto": "Passo 22: Painel de Frequência da Disciplina",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_23",
+      "titulo": "Passo 23: Regras de Pontualidade e Presença",
+      "video_path": "imgs/Cena 23.png",
+      "texto_narracao": "No ponto 1 e 2, você visualiza em destaque as regras de pontualidade e o aviso de liberação da Avaliação de Reação, que ficará disponível na data estipulada para os cursistas concluintes.",
+      "overlay_texto": "Passo 23: Regras de Pontualidade e Presença",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_24",
+      "titulo": "Passo 24: Consulta de Participantes e Colegas",
+      "video_path": "imgs/Cena 24.png",
+      "texto_narracao": "Ao clicar na aba superior 'Participantes', você pode consultar a equipe de instrutores e os colegas matriculados, conferindo o papel de cada usuário e a última atividade registrada na sala.",
+      "overlay_texto": "Passo 24: Consulta de Participantes e Colegas",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_25",
+      "titulo": "Passo 25: Relatório de Usuário e Notas",
+      "video_path": "imgs/Cena 25.png",
+      "texto_narracao": "Na aba 'Notas', o 'Relatório do usuário' exibe sua porcentagem consolidada de presença e eventuais notas atribuídas nas atividades pedagógicas do curso.",
+      "overlay_texto": "Passo 25: Relatório de Usuário e Notas",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_26",
+      "titulo": "Passo 26: Aba de Competências",
+      "video_path": "imgs/Cena 26.png",
+      "texto_narracao": "Na aba 'Competências', são exibidos os objetivos institucionais associados à qualificação.",
+      "overlay_texto": "Passo 26: Aba de Competências",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "cena_27",
+      "titulo": "Passo 27: Encerramento e Próximos Passos",
+      "video_path": "imgs/Cena 27.jpeg",
+      "texto_narracao": "Chegamos ao fim do nosso tutorial! Agora você já domina todos os passos para navegar no AVA Moodle da UEFS com tranquilidade: desde a atualização dos seus dados cadastrais e validação da chefia, até o acompanhamento das aulas, registro de presença e certificação. Aproveite as oportunidades do Plano Anual de Capacitação para fortalecer sua trajetória profissional. A PGDP deseja a você um excelente curso e muito sucesso nos seus estudos!",
+      "overlay_texto": "Passo 27: Encerramento e Próximos Passos",
+      "pausa_final": 0.5
+    }
+  ]
+}

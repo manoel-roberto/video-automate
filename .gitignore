@@ -1,0 +1,24 @@
+# Ambiente virtual
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Arquivos temporários de áudio, uploads e moviepy
+audios_temp/
+temp_streamlit/
+temp_desktop/
+*TEMP_MPY*
+
+# Saída de compilação PyInstaller
+build/
+dist/
+*.spec.bak
+
+# Arquivos compilados pesados (opcional desmarcar se desejar versionar)
+saida/*.mp4
+
+
+

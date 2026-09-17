@@ -1,0 +1,51 @@
+{
+  "titulo_tutorial": "Exemplo de Tutorial Genérico - Boas-vindas e Configuração",
+  "configuracoes_gerais": {
+    "voz_padrao": "pt-BR-AntonioNeural",
+    "taxa_fala_padrao": "+0%",
+    "volume_padrao": "+0%",
+    "resolucao_padrao": [1920, 1080],
+    "fps_padrao": 30,
+    "pausa_final_padrao": 0.5,
+    "video_saida": "saida/tutorial_exemplo.mp4",
+    "manter_audios_temp": false
+  },
+  "cenas": [
+    {
+      "id": "passo_01",
+      "titulo": "Introdução ao Sistema",
+      "video_path": "cenas/01_intro_sistema.mp4",
+      "texto_narracao": "Bem-vindo a este guia passo a passo! Neste vídeo você aprenderá a navegar pelas funcionalidades essenciais da nossa plataforma de maneira rápida e intuitiva.",
+      "voz": "pt-BR-AntonioNeural",
+      "overlay_texto": "Passo 1: Introdução ao Sistema",
+      "imagem_destaque": "cenas/logo_moodle.png",
+      "pausa_final": 0.5
+    },
+    {
+      "id": "passo_02",
+      "titulo": "Painel de Configurações e Preferências",
+      "video_path": "cenas/02_configuracoes.mp4",
+      "texto_narracao": "Para ajustar suas preferências de usuário, clique no seu perfil no canto superior direito e selecione a opção Preferências. Aqui você pode alterar senha, notificações e idioma de exibição.",
+      "voz": "pt-BR-FranciscaNeural",
+      "overlay_texto": {
+        "texto": "Passo 2: Configurando seu Perfil",
+        "posicao": "inferior_esquerdo"
+      },
+      "imagem_destaque": {
+        "caminho": "cenas/badge_dica.png",
+        "posicao": "superior_direito",
+        "tamanho_max": [280, 80]
+      },
+      "pausa_final": 0.5
+    },
+    {
+      "id": "passo_03",
+      "titulo": "Conclusão e Próximos Passos",
+      "video_path": "cenas/03_conclusao.mp4",
+      "texto_narracao": "Com as configurações concluídas, você está pronto para utilizar todos os recursos disponíveis. Em caso de dúvidas, consulte nossa base de conhecimento ou contate o suporte.",
+      "voz": "pt-BR-AntonioNeural",
+      "overlay_texto": "Passo 3: Conclusão e Suporte",
+      "pausa_final": 1.0
+    }
+  ]
+}
