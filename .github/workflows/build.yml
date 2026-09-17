@@ -157,11 +157,26 @@ jobs:
           echo "Fazendo upload dos executáveis com substituição segura (--clobber)..."
           for file in release_assets/*; do
             if [ -f "$file" ]; then
-              echo "Enviando arquivo: $file"
-              gh release upload "${TAG_NAME}" "$file" --clobber || (
-                echo "Tentativa 2 de envio para $file..." && sleep 5 && \
-                gh release upload "${TAG_NAME}" "$file" --clobber
-              )
+              echo "----------------------------------------"
+              echo "Iniciando upload de: $file"
+              upload_ok=0
+              for attempt in 1 2 3; do
+                echo "Tentativa $attempt de envio para $file..."
+                if gh release upload "${TAG_NAME}" "$file" --clobber; then
+                  echo "Upload de $file concluído com sucesso!"
+                  upload_ok=1
+                  break
+                else
+                  echo "Aviso: Tentativa $attempt falhou para $file. Aguardando 10s para re-tentar..."
+                  sleep 10
+                fi
+              done
+              if [ $upload_ok -ne 1 ]; then
+                echo "Erro crítico: Não foi possível enviar $file após 3 tentativas."
+                exit 1
+              fi
+              # Pequena pausa para garantir que o proxy de storage do GitHub finalize o chunking
+              sleep 5
             fi
           done
 
