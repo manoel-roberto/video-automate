@@ -143,15 +143,26 @@ jobs:
              \`\`\`
           EOF
 
-          echo "Criando/atualizando release no GitHub..."
-          if gh release view "${TAG_NAME}" >/dev/null 2>&1; then
-            echo "Release ${TAG_NAME} já existe. Atualizando assets..."
-            gh release upload "${TAG_NAME}" release_assets/VideoAutomate.exe release_assets/VideoAutomate-linux --clobber
-          else
-            echo "Criando nova release ${TAG_NAME}..."
+          echo "Criando/verificando release no GitHub..."
+          if ! gh release view "${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Criando release ${TAG_NAME}..."
             gh release create "${TAG_NAME}" \
-              release_assets/VideoAutomate.exe \
-              release_assets/VideoAutomate-linux \
               --title "${REL_TITLE}" \
               --notes-file release_notes.md
+          else
+            echo "Release ${TAG_NAME} já existe. Atualizando notas..."
+            gh release edit "${TAG_NAME}" --title "${REL_TITLE}" --notes-file release_notes.md || true
           fi
+
+          echo "Fazendo upload dos executáveis com substituição segura (--clobber)..."
+          for file in release_assets/*; do
+            if [ -f "$file" ]; then
+              echo "Enviando arquivo: $file"
+              gh release upload "${TAG_NAME}" "$file" --clobber || (
+                echo "Tentativa 2 de envio para $file..." && sleep 5 && \
+                gh release upload "${TAG_NAME}" "$file" --clobber
+              )
+            fi
+          done
+
+          echo "✅ Release ${TAG_NAME} publicada e assets enviados com sucesso!"
