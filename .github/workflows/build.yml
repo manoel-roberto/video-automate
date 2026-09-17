@@ -3,6 +3,7 @@ name: Build Desktop Applications (Linux & Windows)
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -66,58 +67,91 @@ jobs:
           if-no-files-found: error
 
   release:
-    name: Publish GitHub Release (Latest Builds)
+    name: Publish GitHub Release (Version History)
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
           path: downloaded_artifacts
 
-      - name: Prepare Release Assets
+      - name: Prepare Release Assets & Version Info
+        id: prep
         run: |
           mkdir -p release_assets
-          # Copia executável do Windows
+          # Encontra e copia os executáveis finais
           find downloaded_artifacts -type f -name "VideoAutomate.exe" -exec cp {} release_assets/ \;
-          # Copia executável do Linux
           find downloaded_artifacts -type f -name "VideoAutomate-linux" -exec cp {} release_assets/ \;
           chmod +x release_assets/VideoAutomate-linux || true
-          echo "Arquivos prontos para release:"
+          
+          echo "=== Arquivos para o Release ==="
           ls -lh release_assets/
+          
+          # Define a tag e nome da versão para manter o histórico
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG_NAME="${{ github.ref_name }}"
+            REL_TITLE="Video Automate ${{ github.ref_name }}"
+          else
+            # Versão incremental por execução: v1.0.<run_number> para histórico completo
+            TAG_NAME="v1.0.${{ github.run_number }}"
+            REL_TITLE="Video Automate v1.0.${{ github.run_number }}"
+          fi
+          
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "REL_TITLE=${REL_TITLE}" >> $GITHUB_ENV
+          echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "COMMIT_MSG=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
 
-      - name: Create or Update GitHub Release (latest)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: "🚀 Versão Desktop Compilada (Linux & Windows)"
-          body: |
-            ## 🖥️ Downloads da Versão Desktop
-            
-            Builds automáticas e autocontidas geradas pelo GitHub Actions:
-            
-            * 🪟 **Windows (.exe)**: [Download VideoAutomate.exe](https://github.com/${{ github.repository }}/releases/download/latest/VideoAutomate.exe)
-            * 🐧 **Linux (Executável)**: [Download VideoAutomate-linux](https://github.com/${{ github.repository }}/releases/download/latest/VideoAutomate-linux)
-            
-            ---
-            ### 📌 Instruções de Execução:
-            
-            #### No Windows:
-            1. Baixe o arquivo `VideoAutomate.exe`.
-            2. Dê duplo clique para abrir (não necessita instalar Python ou FFmpeg).
-            
-            #### No Linux:
-            1. Baixe o arquivo `VideoAutomate-linux`.
-            2. Conceda permissão de execução e execute:
-               ```bash
-               chmod +x VideoAutomate-linux
-               ./VideoAutomate-linux
-               ```
-          draft: false
-          prerelease: false
-          files: |
-            release_assets/VideoAutomate.exe
-            release_assets/VideoAutomate-linux
+      - name: Publish Release via GitHub CLI
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cat << EOF > release_notes.md
+          ## 🚀 Video Automate Desktop - Executáveis Prontos para Uso
+
+          Builds automáticas e autocontidas geradas pelo GitHub Actions:
+
+          * 🪟 **Windows (.exe)**: [Download VideoAutomate.exe](https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/VideoAutomate.exe)
+          * 🐧 **Linux (Executável)**: [Download VideoAutomate-linux](https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/VideoAutomate-linux)
+
+          ---
+          ### 📦 Informações desta Versão:
+          - **Tag / Versão**: \`${TAG_NAME}\`
+          - **Commit**: \`${COMMIT_SHA}\` (${COMMIT_MSG})
+          - **Compilado em**: $(date -u '+%d/%m/%Y às %H:%M:%S UTC')
+
+          ---
+          ### 📌 Instruções de Execução:
+
+          #### No Windows:
+          1. Baixe o arquivo **\`VideoAutomate.exe\`**.
+          2. Dê duplo clique para abrir diretamente (não necessita instalar Python nem FFmpeg).
+
+          #### No Linux:
+          1. Baixe o arquivo **\`VideoAutomate-linux\`**.
+          2. Conceda permissão de execução e execute:
+             \`\`\`bash
+             chmod +x VideoAutomate-linux
+             ./VideoAutomate-linux
+             \`\`\`
+          EOF
+
+          echo "Criando/atualizando release no GitHub..."
+          if gh release view "${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Release ${TAG_NAME} já existe. Atualizando assets..."
+            gh release upload "${TAG_NAME}" release_assets/VideoAutomate.exe release_assets/VideoAutomate-linux --clobber
+          else
+            echo "Criando nova release ${TAG_NAME}..."
+            gh release create "${TAG_NAME}" \
+              release_assets/VideoAutomate.exe \
+              release_assets/VideoAutomate-linux \
+              --title "${REL_TITLE}" \
+              --notes-file release_notes.md
+          fi

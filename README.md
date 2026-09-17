@@ -3,9 +3,9 @@
 Motor modular e reutilizável em Python para geração automatizada de vídeos tutoriais. Combina gravações de tela com narração sintetizada por IA (Microsoft Edge TTS), overlays de texto dinâmicos (lower-thirds), imagens de destaque (logos/badges) e sincronização com congelamento de quadro via MoviePy 2.
 
 ### 📥 Baixar Versão Desktop Compilada (Executáveis Prontos)
-* 🪟 **Windows (.exe)**: [**Download VideoAutomate.exe**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate.exe)
-* 🐧 **Linux**: [**Download VideoAutomate-linux**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate-linux)
-* 📦 **Ver todas as Releases**: [**GitHub Releases**](https://github.com/manoel-roberto/video-automate/releases)
+* 🪟 **Windows (.exe)**: [**Download VideoAutomate.exe**](https://github.com/manoel-roberto/video-automate/releases/latest/download/VideoAutomate.exe)
+* 🐧 **Linux (Executável)**: [**Download VideoAutomate-linux**](https://github.com/manoel-roberto/video-automate/releases/latest/download/VideoAutomate-linux)
+* 📦 **Ver todas as Versões e Histórico**: [**GitHub Releases**](https://github.com/manoel-roberto/video-automate/releases)
 
 ---
 
