@@ -143,41 +143,31 @@ jobs:
              \`\`\`
           EOF
 
-          echo "Criando/verificando release no GitHub..."
-          if ! gh release view "${TAG_NAME}" >/dev/null 2>&1; then
-            echo "Criando release ${TAG_NAME}..."
-            gh release create "${TAG_NAME}" \
-              --title "${REL_TITLE}" \
-              --notes-file release_notes.md
-          else
-            echo "Release ${TAG_NAME} já existe. Atualizando notas..."
-            gh release edit "${TAG_NAME}" --title "${REL_TITLE}" --notes-file release_notes.md || true
-          fi
+          upload_success=0
+          for attempt in 1 2 3; do
+            echo "=== Tentativa $attempt de publicação da release ${TAG_NAME} ==="
+            # Se a release já existir (ex: falha parcial anterior), remove antes de recriar
+            if gh release view "${TAG_NAME}" >/dev/null 2>&1; then
+              echo "Limpando release/assets parciais de ${TAG_NAME}..."
+              gh release delete "${TAG_NAME}" -y || true
+            fi
 
-          echo "Fazendo upload dos executáveis com substituição segura (--clobber)..."
-          for file in release_assets/*; do
-            if [ -f "$file" ]; then
-              echo "----------------------------------------"
-              echo "Iniciando upload de: $file"
-              upload_ok=0
-              for attempt in 1 2 3; do
-                echo "Tentativa $attempt de envio para $file..."
-                if gh release upload "${TAG_NAME}" "$file" --clobber; then
-                  echo "Upload de $file concluído com sucesso!"
-                  upload_ok=1
-                  break
-                else
-                  echo "Aviso: Tentativa $attempt falhou para $file. Aguardando 10s para re-tentar..."
-                  sleep 10
-                fi
-              done
-              if [ $upload_ok -ne 1 ]; then
-                echo "Erro crítico: Não foi possível enviar $file após 3 tentativas."
-                exit 1
-              fi
-              # Pequena pausa para garantir que o proxy de storage do GitHub finalize o chunking
-              sleep 5
+            echo "Criando release ${TAG_NAME} e enviando executáveis de forma atômica..."
+            if gh release create "${TAG_NAME}" \
+                release_assets/VideoAutomate.exe \
+                release_assets/VideoAutomate-linux \
+                --title "${REL_TITLE}" \
+                --notes-file release_notes.md; then
+              echo "✅ Release ${TAG_NAME} criada e executáveis anexados com sucesso!"
+              upload_success=1
+              break
+            else
+              echo "Aviso: Tentativa $attempt falhou ao criar release ou enviar assets. Aguardando 15 segundos..."
+              sleep 15
             fi
           done
 
-          echo "✅ Release ${TAG_NAME} publicada e assets enviados com sucesso!"
+          if [ $upload_success -ne 1 ]; then
+            echo "Erro crítico: Falha ao publicar release após 3 tentativas."
+            exit 1
+          fi
