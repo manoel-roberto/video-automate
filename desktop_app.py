@@ -34,6 +34,10 @@ from PySide6.QtGui import (
     QColor,
     QKeySequence,
 )
+from PySide6.QtMultimedia import (
+    QMediaPlayer,
+    QAudioOutput,
+)
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -57,6 +61,7 @@ from PySide6.QtWidgets import (
     QSplitter,
     QDialog,
     QSizePolicy,
+    QStyledItemDelegate,
 )
 
 # Imports do motor central e utilitários
@@ -82,10 +87,11 @@ from desktop_utils import (
     descompactar_e_importar_zip,
     limpar_arquivos_temporarios,
     sintetizar_audio_sincrono,
+    gerar_miniatura_midia,
 )
 
 # ==============================================================================
-# Tema e Estilos QSS (Modern Dark Theme)
+# Tema e Estilos QSS (Modern Dark Theme com Alto Contraste)
 # ==============================================================================
 
 ESTILO_QSS = """
@@ -167,7 +173,7 @@ QLabel.badge-label {
     border-radius: 6px;
 }
 
-QLineEdit, QTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox {
     background-color: #1e293b;
     color: #f8fafc;
     border: 1px solid #334155;
@@ -176,17 +182,84 @@ QLineEdit, QTextEdit, QComboBox, QSpinBox, QDoubleSpinBox {
     selection-background-color: #3b82f6;
 }
 
-QLineEdit:focus, QTextEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus {
+QLineEdit:focus, QTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus {
     border: 1px solid #3b82f6;
     background-color: #1e2a42;
+}
+
+/* Estilos de Alto Contraste para QComboBox e seu Dropdown */
+QComboBox {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    border-radius: 7px;
+    padding: 6px 12px;
+    font-weight: 500;
+    selection-background-color: #2563eb;
+    selection-color: #ffffff;
+}
+
+QComboBox:hover {
+    border-color: #3b82f6;
+    background-color: #243048;
+}
+
+QComboBox:focus {
+    border: 1px solid #3b82f6;
 }
 
 QComboBox::drop-down {
     subcontrol-origin: padding;
     subcontrol-position: top right;
-    width: 25px;
+    width: 28px;
     border-left: 1px solid #334155;
+    background-color: #1a2333;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
+
+QComboBox::down-arrow {
+    image: none;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #94a3b8;
+    margin-right: 4px;
+}
+
+QComboBox::down-arrow:hover {
+    border-top-color: #60a5fa;
+}
+
+/* Menu Dropdown Suspenso (Lista de Opções com Fundo Escuro e Letra Clara) */
+QComboBox QAbstractItemView {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    padding: 4px;
+    selection-background-color: #2563eb;
+    selection-color: #ffffff;
+    outline: none;
+}
+
+QComboBox QAbstractItemView::item {
+    background-color: #0f172a;
+    color: #f8fafc;
+    min-height: 30px;
+    padding: 6px 12px;
+    border-radius: 5px;
+}
+
+QComboBox QAbstractItemView::item:hover {
+    background-color: #1d4ed8;
+    color: #ffffff;
+}
+
+QComboBox QAbstractItemView::item:selected {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
 
 QPushButton {
     background-color: #1e293b;
@@ -328,6 +401,58 @@ class FramePreviewDialog(QDialog):
 
 
 # ==============================================================================
+# Diálogo de Visualização de Mídia em Alta Resolução
+# ==============================================================================
+
+class MediaViewerDialog(QDialog):
+    """Exibe a imagem ou o quadro do vídeo selecionado em tamanho original com rolagem."""
+
+    def __init__(self, caminho_midia: str, titulo_cena: str, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(f"Visualizador de Mídia - {Path(caminho_midia).name}")
+        self.resize(1050, 680)
+        self.setStyleSheet(ESTILO_QSS)
+
+        layout = QVBoxLayout(self)
+
+        p = Path(caminho_midia)
+        ext = p.suffix.lower()
+
+        info_label = QLabel(f"📁 <b>{p.name}</b> &nbsp;|&nbsp; Cena: <i>{titulo_cena}</i>")
+        info_label.setStyleSheet("color: #93c5fd; font-size: 13px; margin-bottom: 6px;")
+        layout.addWidget(info_label)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        lbl_img = QLabel()
+        lbl_img.setAlignment(Qt.AlignCenter)
+        lbl_img.setStyleSheet("background-color: #090d16; border-radius: 8px;")
+
+        try:
+            if ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]:
+                pixmap = QPixmap(str(p))
+            else:
+                clip = VideoFileClip(str(p))
+                t = min(1.0, max(0.0, clip.duration / 2.0)) if clip.duration else 0.0
+                frame_arr = clip.get_frame(t)
+                clip.close()
+                img = Image.fromarray(frame_arr).convert("RGBA")
+                qim = QImage(img.tobytes("raw", "RGBA"), img.width, img.height, QImage.Format_RGBA8888)
+                pixmap = QPixmap.fromImage(qim)
+
+            lbl_img.setPixmap(pixmap.scaled(1000, 580, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        except Exception as e:
+            lbl_img.setText(f"Não foi possível carregar visualização completa:\n{e}")
+
+        scroll.setWidget(lbl_img)
+        layout.addWidget(scroll, stretch=1)
+
+        btn_fechar = QPushButton("Fechar Visualização")
+        btn_fechar.clicked.connect(self.accept)
+        layout.addWidget(btn_fechar, alignment=Qt.AlignRight)
+
+
+# ==============================================================================
 # Card Interativo de Cena (SceneCardWidget)
 # ==============================================================================
 
@@ -344,6 +469,13 @@ class SceneCardWidget(QFrame):
         self.numero = numero
         self.setProperty("class", "card-frame")
         self.setObjectName("SceneCard")
+
+        # Player de áudio interno nativo (QMediaPlayer + QAudioOutput)
+        self.player = QMediaPlayer(self)
+        self.audio_output = QAudioOutput(self)
+        self.player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(1.0)
+        self.player.playbackStateChanged.connect(self._ao_mudar_estado_player)
 
         self._iniciar_ui()
 
@@ -409,6 +541,55 @@ class SceneCardWidget(QFrame):
 
         self.layout_principal.addLayout(midia_layout)
 
+        # --- Painel de Miniatura e Conferência Visual da Mídia ---
+        self.frame_preview_midia = QFrame()
+        self.frame_preview_midia.setStyleSheet(
+            "background-color: #0e1628; border: 1px solid #1e293b; border-radius: 8px;"
+        )
+        layout_preview_midia = QHBoxLayout(self.frame_preview_midia)
+        layout_preview_midia.setContentsMargins(10, 8, 10, 8)
+        layout_preview_midia.setSpacing(14)
+
+        # Miniatura da Mídia (com tamanho proporcional 16:9)
+        self.lbl_thumb_midia = QLabel()
+        self.lbl_thumb_midia.setFixedSize(190, 108)
+        self.lbl_thumb_midia.setAlignment(Qt.AlignCenter)
+        self.lbl_thumb_midia.setStyleSheet(
+            "background-color: #111827; border: 1px dashed #374151; border-radius: 6px; color: #64748b;"
+        )
+        self.lbl_thumb_midia.setText("📷 Sem Mídia")
+        layout_preview_midia.addWidget(self.lbl_thumb_midia)
+
+        # Metadados e Ações da Mídia
+        col_meta = QVBoxLayout()
+        col_meta.setSpacing(4)
+
+        self.lbl_midia_nome = QLabel("Nenhuma mídia selecionada")
+        self.lbl_midia_nome.setStyleSheet("font-weight: bold; font-size: 13px; color: #60a5fa;")
+        col_meta.addWidget(self.lbl_midia_nome)
+
+        self.lbl_midia_tipo_res = QLabel("Clique em '📁 Procurar...' para carregar um vídeo ou captura de tela.")
+        self.lbl_midia_tipo_res.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        col_meta.addWidget(self.lbl_midia_tipo_res)
+
+        self.lbl_midia_detalhes = QLabel("")
+        self.lbl_midia_detalhes.setStyleSheet("color: #64748b; font-size: 11px;")
+        col_meta.addWidget(self.lbl_midia_detalhes)
+
+        col_meta.addStretch()
+
+        self.btn_ver_midia_inteira = QPushButton("🔍 Visualizar Mídia Completa")
+        self.btn_ver_midia_inteira.setFixedWidth(200)
+        self.btn_ver_midia_inteira.setVisible(False)
+        self.btn_ver_midia_inteira.clicked.connect(self._abrir_visualizador_midia_completa)
+        col_meta.addWidget(self.btn_ver_midia_inteira)
+
+        layout_preview_midia.addLayout(col_meta, stretch=1)
+        self.layout_principal.addWidget(self.frame_preview_midia)
+
+        # Atualiza a miniatura automaticamente ao alterar o caminho
+        self.input_caminho_midia.textChanged.connect(self._atualizar_preview_midia)
+
         # --- Seção 2: Narração Neural com edge-tts ---
         narracao_box = QVBoxLayout()
         narracao_header = QHBoxLayout()
@@ -418,6 +599,7 @@ class SceneCardWidget(QFrame):
         narracao_header.addStretch()
 
         self.combo_voz = QComboBox()
+        self.combo_voz.setItemDelegate(QStyledItemDelegate(self.combo_voz))
         self.combo_voz.addItem("Voz Padrão do Projeto", None)
         for rotulo, val in OPCOES_VOZES.items():
             if val != "custom":
@@ -426,6 +608,7 @@ class SceneCardWidget(QFrame):
         narracao_header.addWidget(self.combo_voz)
 
         self.combo_taxa = QComboBox()
+        self.combo_taxa.setItemDelegate(QStyledItemDelegate(self.combo_taxa))
         self.combo_taxa.addItem("Velocidade Padrão", None)
         for taxa in TAXAS_FALA:
             self.combo_taxa.addItem(taxa, taxa)
@@ -433,7 +616,7 @@ class SceneCardWidget(QFrame):
         narracao_header.addWidget(self.combo_taxa)
 
         self.btn_ouvir_audio = QPushButton("🔊 Ouvir Prévia")
-        self.btn_ouvir_audio.setToolTip("Sintetiza e reproduz o áudio desta cena imediatamente")
+        self.btn_ouvir_audio.setToolTip("Sintetiza e reproduz o áudio desta cena diretamente dentro do aplicativo")
         self.btn_ouvir_audio.clicked.connect(self._ouvir_previa_audio)
         narracao_header.addWidget(self.btn_ouvir_audio)
 
@@ -502,6 +685,40 @@ class SceneCardWidget(QFrame):
         if caminho:
             self.input_caminho_midia.setText(caminho)
 
+    def _atualizar_preview_midia(self):
+        caminho = self.input_caminho_midia.text().strip()
+        info_midia = gerar_miniatura_midia(caminho, largura_max=190, altura_max=108)
+        if info_midia:
+            img_pil, nome, tipo_res, detalhes = info_midia
+            img_bytes = img_pil.convert("RGBA").tobytes("raw", "RGBA")
+            qim = QImage(img_bytes, img_pil.width, img_pil.height, QImage.Format_RGBA8888)
+            pix = QPixmap.fromImage(qim)
+            self.lbl_thumb_midia.setPixmap(pix)
+            self.lbl_thumb_midia.setText("")
+            self.lbl_thumb_midia.setStyleSheet(
+                "background-color: #090d16; border: 1px solid #3b82f6; border-radius: 6px;"
+            )
+            self.lbl_midia_nome.setText(nome)
+            self.lbl_midia_tipo_res.setText(tipo_res)
+            self.lbl_midia_detalhes.setText(detalhes)
+            self.btn_ver_midia_inteira.setVisible(True)
+        else:
+            self.lbl_thumb_midia.clear()
+            self.lbl_thumb_midia.setText("📷 Sem Mídia")
+            self.lbl_thumb_midia.setStyleSheet(
+                "background-color: #111827; border: 1px dashed #374151; border-radius: 6px; color: #64748b;"
+            )
+            self.lbl_midia_nome.setText("Nenhuma mídia selecionada")
+            self.lbl_midia_tipo_res.setText("Clique em '📁 Procurar...' para carregar um vídeo ou captura de tela.")
+            self.lbl_midia_detalhes.setText("")
+            self.btn_ver_midia_inteira.setVisible(False)
+
+    def _abrir_visualizador_midia_completa(self):
+        caminho = self.input_caminho_midia.text().strip()
+        if caminho and Path(caminho).is_file():
+            dlg = MediaViewerDialog(caminho, self.input_titulo.text().strip(), self)
+            dlg.exec()
+
     def _abrir_previa_frame(self):
         caminho_midia = self.input_caminho_midia.text().strip()
         if not caminho_midia or not Path(caminho_midia).is_file():
@@ -538,6 +755,13 @@ class SceneCardWidget(QFrame):
             QMessageBox.critical(self, "Erro na Prévia", f"Falha ao gerar prévia do frame:\n{e}")
 
     def _ouvir_previa_audio(self):
+        # Se já estiver reproduzindo o áudio interno, interrompe a execução
+        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+            self.player.stop()
+            self.btn_ouvir_audio.setText("🔊 Ouvir Prévia")
+            self.btn_ouvir_audio.setStyleSheet("")
+            return
+
         texto = self.input_narracao.toPlainText().strip()
         if not texto:
             QMessageBox.information(
@@ -567,17 +791,29 @@ class SceneCardWidget(QFrame):
 
         sucesso = sintetizar_audio_sincrono(texto, arq_saida, voz, taxa)
         self.btn_ouvir_audio.setEnabled(True)
-        self.btn_ouvir_audio.setText("🔊 Ouvir Prévia")
 
         if sucesso and arq_saida.is_file():
-            # Executa com player padrão do sistema operacional
-            abrir_arquivo_no_sistema(str(arq_saida))
+            # Reproduz diretamente DENTRO da aplicação com o QMediaPlayer integrado
+            self.player.setSource(QUrl.fromLocalFile(str(arq_saida.resolve())))
+            self.player.play()
+            self.btn_ouvir_audio.setText("⏹️ Parar Áudio")
+            self.btn_ouvir_audio.setStyleSheet(
+                "background-color: #991b1b; color: #ffffff; border: 1px solid #ef4444;"
+            )
         else:
+            self.btn_ouvir_audio.setText("🔊 Ouvir Prévia")
+            self.btn_ouvir_audio.setStyleSheet("")
             QMessageBox.critical(
                 self,
                 "Erro de Síntese",
                 "Não foi possível sintetizar o áudio com o Microsoft Edge TTS.\nVerifique sua conexão com a internet.",
             )
+
+    def _ao_mudar_estado_player(self, estado):
+        if estado != QMediaPlayer.PlaybackState.PlayingState:
+            self.btn_ouvir_audio.setText("🔊 Ouvir Prévia")
+            self.btn_ouvir_audio.setStyleSheet("")
+
 
     def obter_dados(self) -> Dict[str, Any]:
         """Extrai todos os dados preenchidos neste card."""
@@ -917,6 +1153,7 @@ class MainWindow(QMainWindow):
         # Resolução
         sidebar_layout.addWidget(QLabel("📐 Resolução de Saída:"))
         self.combo_resolucao = QComboBox()
+        self.combo_resolucao.setItemDelegate(QStyledItemDelegate(self.combo_resolucao))
         for rotulo, res in OPCOES_RESOLUCAO.items():
             self.combo_resolucao.addItem(rotulo, res)
         sidebar_layout.addWidget(self.combo_resolucao)
@@ -924,12 +1161,14 @@ class MainWindow(QMainWindow):
         # FPS
         sidebar_layout.addWidget(QLabel("🎞️ Taxa de Quadros (FPS):"))
         self.combo_fps = QComboBox()
+        self.combo_fps.setItemDelegate(QStyledItemDelegate(self.combo_fps))
         self.combo_fps.addItems(["30 FPS (Padrão Recomendado)", "60 FPS (Alta Fluidez)", "24 FPS (Cinemático)"])
         sidebar_layout.addWidget(self.combo_fps)
 
         # Voz Padrão do Projeto
         sidebar_layout.addWidget(QLabel("🗣️ Voz Padrão (edge-tts):"))
         self.combo_voz_padrao = QComboBox()
+        self.combo_voz_padrao.setItemDelegate(QStyledItemDelegate(self.combo_voz_padrao))
         for rotulo, val in OPCOES_VOZES.items():
             if val != "custom":
                 self.combo_voz_padrao.addItem(rotulo, val)
@@ -938,10 +1177,12 @@ class MainWindow(QMainWindow):
         # Velocidade Padrão
         sidebar_layout.addWidget(QLabel("⚡ Velocidade da Fala Padrão:"))
         self.combo_taxa_padrao = QComboBox()
+        self.combo_taxa_padrao.setItemDelegate(QStyledItemDelegate(self.combo_taxa_padrao))
         for taxa in TAXAS_FALA:
             self.combo_taxa_padrao.addItem(taxa, taxa)
         self.combo_taxa_padrao.setCurrentText("+0%")
         sidebar_layout.addWidget(self.combo_taxa_padrao)
+
 
         # Pausa Final
         sidebar_layout.addWidget(QLabel("⏸️ Pausa Final entre Cenas (segundos):"))

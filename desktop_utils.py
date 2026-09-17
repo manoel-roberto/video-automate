@@ -330,3 +330,56 @@ def limpar_arquivos_temporarios(pasta_base: Path = Path("temp_desktop")) -> int:
         except Exception:
             pass
     return removidos
+
+
+def gerar_miniatura_midia(
+    caminho_midia: str,
+    largura_max: int = 220,
+    altura_max: int = 124,
+) -> Optional[Tuple[Image.Image, str, str, str]]:
+    """
+    Gera miniatura proporcional e metadados descritivos de uma mídia (vídeo ou imagem).
+    Retorna: (imagem_pil_miniatura, nome_arquivo, tipo_e_resolucao, detalhes_extras) ou None.
+    """
+    if not caminho_midia:
+        return None
+    p = Path(caminho_midia)
+    if not p.is_file():
+        return None
+
+    ext = p.suffix.lower()
+    tamanho_bytes = p.stat().st_size
+    tamanho_str = f"{tamanho_bytes / (1024 * 1024):.1f} MB" if tamanho_bytes > 1024 * 1024 else f"{tamanho_bytes / 1024:.0f} KB"
+
+    try:
+        if ext in [".png", ".jpg", ".jpeg", ".webp", ".bmp"]:
+            with Image.open(p) as img_orig:
+                w_orig, h_orig = img_orig.size
+                tipo_resolucao = f"🖼️ Imagem {ext.replace('.', '').upper()} ({w_orig}x{h_orig})"
+                detalhes = f"Tamanho: {tamanho_str}"
+
+                img_thumb = img_orig.convert("RGBA")
+                img_thumb.thumbnail((largura_max, altura_max), Image.Resampling.LANCZOS)
+                return img_thumb, p.name, tipo_resolucao, detalhes
+        else:
+            clip = VideoFileClip(str(p))
+            dur = float(clip.duration or 0.0)
+            w_orig, h_orig = clip.w, clip.h
+            t_frame = min(1.0, max(0.0, dur / 2.0)) if dur else 0.0
+            frame_arr = clip.get_frame(t_frame)
+            clip.close()
+
+            minutos = int(dur // 60)
+            segundos = int(dur % 60)
+            dur_str = f"{minutos}m {segundos:02d}s" if minutos > 0 else f"{dur:.1f}s"
+
+            tipo_resolucao = f"🎥 Vídeo {ext.replace('.', '').upper()} ({w_orig}x{h_orig})"
+            detalhes = f"Duração: {dur_str} • Tamanho: {tamanho_str}"
+
+            img_base = Image.fromarray(frame_arr).convert("RGBA")
+            img_base.thumbnail((largura_max, altura_max), Image.Resampling.LANCZOS)
+            return img_base, p.name, tipo_resolucao, detalhes
+    except Exception as e:
+        print(f"Erro ao extrair miniatura de {caminho_midia}: {e}")
+        return None
+

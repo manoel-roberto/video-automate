@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -18,9 +21,11 @@ jobs:
           - os: ubuntu-22.04
             artifact_name: VideoAutomate-linux
             binary_path: dist/VideoAutomate
+            target_filename: VideoAutomate-linux
           - os: windows-latest
-            artifact_name: VideoAutomate-windows.exe
+            artifact_name: VideoAutomate-windows
             binary_path: dist/VideoAutomate.exe
+            target_filename: VideoAutomate.exe
 
     steps:
       - name: Checkout repository
@@ -36,7 +41,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-glx libegl1 libxkbcommon-x11-0
+          sudo apt-get install -y libgl1-mesa-glx libegl1 libxkbcommon-x11-0 libxcb-cursor0
 
       - name: Install Python dependencies
         run: |
@@ -47,9 +52,72 @@ jobs:
         run: |
           pyinstaller --clean video_automate.spec
 
+      - name: Prepare Binary with Fixed Name
+        shell: bash
+        run: |
+          mkdir -p dist_artifact
+          cp ${{ matrix.binary_path }} dist_artifact/${{ matrix.target_filename }}
+
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.binary_path }}
+          path: dist_artifact/${{ matrix.target_filename }}
           if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release (Latest Builds)
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded_artifacts
+
+      - name: Prepare Release Assets
+        run: |
+          mkdir -p release_assets
+          # Copia executável do Windows
+          find downloaded_artifacts -type f -name "VideoAutomate.exe" -exec cp {} release_assets/ \;
+          # Copia executável do Linux
+          find downloaded_artifacts -type f -name "VideoAutomate-linux" -exec cp {} release_assets/ \;
+          chmod +x release_assets/VideoAutomate-linux || true
+          echo "Arquivos prontos para release:"
+          ls -lh release_assets/
+
+      - name: Create or Update GitHub Release (latest)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "🚀 Versão Desktop Compilada (Linux & Windows)"
+          body: |
+            ## 🖥️ Downloads da Versão Desktop
+            
+            Builds automáticas e autocontidas geradas pelo GitHub Actions:
+            
+            * 🪟 **Windows (.exe)**: [Download VideoAutomate.exe](https://github.com/${{ github.repository }}/releases/download/latest/VideoAutomate.exe)
+            * 🐧 **Linux (Executável)**: [Download VideoAutomate-linux](https://github.com/${{ github.repository }}/releases/download/latest/VideoAutomate-linux)
+            
+            ---
+            ### 📌 Instruções de Execução:
+            
+            #### No Windows:
+            1. Baixe o arquivo `VideoAutomate.exe`.
+            2. Dê duplo clique para abrir (não necessita instalar Python ou FFmpeg).
+            
+            #### No Linux:
+            1. Baixe o arquivo `VideoAutomate-linux`.
+            2. Conceda permissão de execução e execute:
+               ```bash
+               chmod +x VideoAutomate-linux
+               ./VideoAutomate-linux
+               ```
+          draft: false
+          prerelease: false
+          files: |
+            release_assets/VideoAutomate.exe
+            release_assets/VideoAutomate-linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

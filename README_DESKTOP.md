@@ -2,18 +2,24 @@
 
 Aplicação Desktop nativa profissional desenvolvida em **PySide6 (Qt 6)** com empacotamento completo para **Linux** e **Windows** via **PyInstaller**.
 
+### 📥 Downloads dos Executáveis Prontos
+* 🪟 **Windows (.exe)**: [**Download VideoAutomate.exe**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate.exe)
+* 🐧 **Linux**: [**Download VideoAutomate-linux**](https://github.com/manoel-roberto/video-automate/releases/download/latest/VideoAutomate-linux)
+* 📦 **GitHub Releases**: [**Página de Releases do Projeto**](https://github.com/manoel-roberto/video-automate/releases)
+
 ---
 
 ## ✨ Recursos da Versão Desktop
 
 - **100% Nativa e Offline-Ready**: Sem necessidade de abrir navegador ou portas de rede locais.
+- **Tema Escuro Moderno com Alto Contraste**: Menus suspensos (Dropdowns) estilizados com texto nítido e destaque visual.
 - **Multithreading Seguro (`QThread`)**: Síntese de áudio (edge-tts) e renderização pesada (MoviePy/FFmpeg) ocorrem em segundo plano sem congelar a interface.
-- **Gerenciamento de Cenas Dinâmico**:
-  - Reordenação fácil de cenas (▲ Subir / ▼ Descer).
-  - Duplicação e exclusão rápida de cenas.
-  - Seleção de vídeo ou imagem (captura de tela) por diálogo nativo do sistema operacional.
-- **Prévia Instantânea de Áudio**: Ouça a voz sintetizada com edge-tts antes de gerar o vídeo.
-- **Prévia Visual em Alta Resolução**: Visualize exatamente como ficará o snapshot do frame com a tarja (lower-third) e a legenda discreta antes de renderizar.
+- **Gerenciamento de Cenas Dinâmico com Miniatura Visual**:
+  - Reordenação fácil de cenas (▲ Subir / ▼ Descer), Duplicação e Exclusão.
+  - **Conferência Visual da Mídia**: exibe miniatura proporcional do vídeo/screenshot, resolução, duração e botão de tela cheia.
+  - Seleção de vídeo ou imagem por diálogo nativo do sistema operacional.
+- **Player de Áudio Interno**: Ouça a narração sintetizada com edge-tts diretamente dentro do aplicativo, com botão de tocar/parar integrado (sem abrir programas externos).
+- **Prévia Visual em Alta Resolução (Snapshot)**: Visualize exatamente como ficará o snapshot do frame com a tarja (lower-third) e a legenda discreta antes de renderizar.
 - **Portabilidade de Projetos**:
   - Salvar e carregar arquivos de configuração `.json`.
   - Exportar e importar pacotes completos `.zip` (incluindo todas as gravações e imagens).
@@ -21,6 +27,8 @@ Aplicação Desktop nativa profissional desenvolvida em **PySide6 (Qt 6)** com e
   - Reproduzir o vídeo diretamente no player padrão do sistema.
   - Abrir a pasta de saída no gerenciador de arquivos (Nautilus, Dolphin, Windows Explorer).
   - Salvar cópia do arquivo em qualquer pasta do computador.
+- **Compilação Contínua Automatizada (CI/CD)**: Cada atualização no repositório gera automaticamente os binários para Linux e Windows e os disponibiliza para download no GitHub.
+
 
 ---
 
